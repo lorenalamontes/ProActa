@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ProActa — Modelo de Predicción y Análisis del Comportamiento Comercial</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --ink:      #0B1826;
+  --deep:     #0F2640;
+  --steel:    #1A3A5C;
+  --orange:   #E8620A;
+  --orange2:  #FF7A1A;
+  --teal:     #00B4A0;
+  --silver:   #F2F5F8;
+  --border:   #D4DCE6;
+  --muted:    #6B7D90;
+  --text:     #1A2B3C;
+  --white:    #FFFFFF;
+  --green:    #1A9E6A;
+  --amber:    #D4A017;
+  --red:      #C0392B;
+  --mono: 'JetBrains Mono', monospace;
+  --body: 'Inter', sans-serif;
+  --display: 'Barlow Condensed', sans-serif;
+}
+
+html { scroll-behavior: smooth; }
+body { font-family: var(--body); background: var(--silver); color: var(--text); line-height: 1.6; }
+
+/* ── NAV ─────────────────────────────────────────── */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--ink);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 2.5rem; height: 54px;
+  border-bottom: 2px solid var(--orange);
+}
+.nav-brand {
+  font-family: var(--display); font-weight: 800; font-size: 1.3rem;
+  letter-spacing: .04em; color: var(--white);
+  display: flex; align-items: center; gap: .5rem;
+}
+.nav-brand span { color: var(--orange); }
+.nav-links { display: flex; gap: 2rem; }
+.nav-links a {
+  font-size: .75rem; font-weight: 600; letter-spacing: .06em;
+  text-transform: uppercase; color: rgba(255,255,255,.45);
+  text-decoration: none; transition: color .2s;
+}
+.nav-links a:hover { color: var(--orange); }
+
+/* ── HERO ────────────────────────────────────────── */
+.hero {
+  background: var(--deep);
+  padding: 4.5rem 2.5rem 3.5rem;
+  border-bottom: 3px solid var(--orange);
+  position: relative; overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(
+    90deg, transparent, transparent 60px,
+    rgba(255,255,255,.018) 60px, rgba(255,255,255,.018) 61px
+  );
+  pointer-events: none;
+}
+.hero-inner {
+  max-width: 1120px; margin: 0 auto;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center;
+  position: relative;
+}
+.hero-eyebrow {
+  font-family: var(--mono); font-size: .7rem;
+  color: var(--orange); letter-spacing: .12em; text-transform: uppercase;
+  margin-bottom: .9rem;
+}
+.hero h1 {
+  font-family: var(--display); font-weight: 800;
+  font-size: clamp(2.4rem, 4.5vw, 3.8rem);
+  color: var(--white); line-height: 1.05;
+  letter-spacing: .01em; margin-bottom: 1.1rem;
+  text-transform: uppercase;
+}
+.hero h1 em { color: var(--orange); font-style: normal; }
+.hero-sub {
+  color: rgba(255,255,255,.55); font-size: .95rem;
+  max-width: 430px; line-height: 1.75; margin-bottom: 2rem;
+}
+.hero-stats {
+  display: flex; gap: 2rem; flex-wrap: wrap;
+}
+.hero-stat .val {
+  font-family: var(--display); font-size: 2rem; font-weight: 800;
+  color: var(--white); letter-spacing: -.01em;
+}
+.hero-stat .lbl {
+  font-family: var(--mono); font-size: .65rem;
+  color: rgba(255,255,255,.4); text-transform: uppercase; letter-spacing: .08em;
+}
+
+/* ── FICHA TÉCNICA (Signature element) ────────────── */
+.ficha {
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(232,98,10,.35);
+  border-radius: 4px; overflow: hidden;
+}
+.ficha-header {
+  background: var(--orange); padding: .6rem 1rem;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.ficha-header span {
+  font-family: var(--mono); font-size: .7rem;
+  font-weight: 500; color: var(--white); letter-spacing: .06em;
+}
+.ficha-title {
+  font-family: var(--display); font-size: 1rem;
+  font-weight: 700; color: var(--white); text-transform: uppercase;
+}
+.ficha-row {
+  display: flex; border-bottom: 1px solid rgba(255,255,255,.07);
+}
+.ficha-row:last-child { border-bottom: none; }
+.ficha-key {
+  width: 42%; padding: .65rem 1rem;
+  font-family: var(--mono); font-size: .68rem;
+  color: rgba(255,255,255,.38); letter-spacing: .04em; text-transform: uppercase;
+  border-right: 1px solid rgba(255,255,255,.07);
+  display: flex; align-items: center;
+}
+.ficha-val {
+  flex: 1; padding: .65rem 1rem;
+  font-size: .82rem; color: rgba(255,255,255,.85);
+  display: flex; align-items: center;
+}
+.ficha-val.ok { color: #4ADE80; }
+.ficha-val.warn { color: var(--orange); }
+
+/* ── TEAM ────────────────────────────────────────── */
+.team-bar {
+  background: var(--ink); border-top: 1px solid rgba(232,98,10,.25);
+  padding: 1.6rem 2.5rem;
+}
+.team-inner {
+  max-width: 1120px; margin: 0 auto;
+  display: flex; align-items: center; gap: 2.5rem; flex-wrap: wrap;
+}
+.team-label {
+  font-family: var(--mono); font-size: .65rem;
+  letter-spacing: .12em; color: var(--orange); text-transform: uppercase;
+  white-space: nowrap; flex-shrink: 0;
+}
+.team-chips { display: flex; flex-wrap: wrap; gap: .4rem; }
+.chip {
+  font-size: .75rem; color: rgba(255,255,255,.65);
+  background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1);
+  padding: .22rem .7rem; border-radius: 3px;
+}
+
+/* ── SECTION ─────────────────────────────────────── */
+.sec { padding: 4rem 2.5rem; }
+.sec.alt { background: var(--white); }
+.sec-inner { max-width: 1120px; margin: 0 auto; }
+.sec-eye {
+  font-family: var(--mono); font-size: .68rem; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--orange); margin-bottom: .5rem;
+}
+.sec-title {
+  font-family: var(--display); font-size: 2rem; font-weight: 800;
+  text-transform: uppercase; color: var(--ink);
+  letter-spacing: .02em; margin-bottom: .5rem;
+}
+.sec-lead {
+  color: var(--muted); font-size: .92rem; max-width: 600px;
+  line-height: 1.75; margin-bottom: 2.5rem;
+}
+
+/* ── ETL PIPELINE ────────────────────────────────── */
+.pipeline {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  border: 1px solid var(--border); border-radius: 6px; overflow: hidden;
+  background: var(--white);
+}
+.pipe-stage { padding: 1.8rem; position: relative; }
+.pipe-stage:not(:last-child) { border-right: 1px solid var(--border); }
+.pipe-badge {
+  display: inline-block; font-family: var(--mono);
+  font-size: .65rem; letter-spacing: .1em; text-transform: uppercase;
+  padding: .25rem .6rem; border-radius: 3px; margin-bottom: .9rem;
+  font-weight: 600;
+}
+.pipe-badge.extract { background: #E8F4FD; color: #1A6FA0; }
+.pipe-badge.transform { background: #FEF9E7; color: #9A7D0A; }
+.pipe-badge.load { background: #E8F8F5; color: #1A7A5A; }
+.pipe-stage h4 {
+  font-family: var(--display); font-size: 1rem; font-weight: 700;
+  text-transform: uppercase; color: var(--ink); margin-bottom: .7rem;
+}
+.pipe-stage ul { list-style: none; }
+.pipe-stage ul li {
+  font-size: .8rem; color: var(--muted); padding: .18rem 0;
+  padding-left: .9rem; position: relative;
+}
+.pipe-stage ul li::before {
+  content: '—'; position: absolute; left: 0;
+  color: var(--orange); font-size: .7rem;
+}
+
+/* ── VARIABLE TABLE ──────────────────────────────── */
+.var-table {
+  width: 100%; border-collapse: collapse;
+  border: 1px solid var(--border); border-radius: 6px; overflow: hidden;
+  background: var(--white); font-size: .82rem;
+}
+.var-table thead th {
+  background: var(--ink); color: rgba(255,255,255,.8);
+  font-family: var(--mono); font-size: .68rem; letter-spacing: .08em;
+  text-transform: uppercase; padding: .75rem 1rem; text-align: left;
+  font-weight: 500;
+}
+.var-table tbody td {
+  padding: .75rem 1rem; border-bottom: 1px solid var(--border);
+  color: var(--text); vertical-align: top;
+}
+.var-table tbody tr:last-child td { border-bottom: none; }
+.var-table tbody tr:nth-child(even) td { background: var(--silver); }
+.tag {
+  display: inline-block; font-family: var(--mono); font-size: .67rem;
+  padding: .15rem .5rem; border-radius: 3px; font-weight: 600;
+}
+.tag-target { background: #FDECEA; color: #B71C1C; }
+.tag-pred { background: #E8F4FD; color: #1A5276; }
+.tag-eng { background: #E8F8F5; color: #145A32; }
+
+/* ── MODEL CARDS ─────────────────────────────────── */
+.model-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.2rem;
+}
+.model-card {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: 6px; overflow: hidden;
+}
+.model-card-head {
+  padding: .9rem 1.2rem;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.model-name {
+  font-family: var(--display); font-size: 1rem;
+  font-weight: 700; text-transform: uppercase; color: var(--ink);
+}
+.model-status {
+  font-family: var(--mono); font-size: .62rem; letter-spacing: .06em;
+  padding: .2rem .55rem; border-radius: 3px; font-weight: 600;
+}
+.status-used { background: #E8F4FD; color: #1A6FA0; border: 1px solid #AED6F1; }
+.status-alt { background: var(--silver); color: var(--muted); border: 1px solid var(--border); }
+.model-body { padding: 0 1.2rem 1.2rem; }
+.model-body p { font-size: .78rem; color: var(--muted); line-height: 1.6; }
+.model-pros, .model-cons {
+  margin-top: .7rem; font-size: .75rem; line-height: 1.6;
+}
+.model-pros span { color: var(--green); font-weight: 600; }
+.model-cons span { color: var(--red); font-weight: 600; }
+.model-card.highlight { border-color: var(--orange); }
+.model-card.highlight .model-card-head { background: rgba(232,98,10,.06); border-bottom: 1px solid rgba(232,98,10,.2); }
+
+/* ── METRICS DASHBOARD ───────────────────────────── */
+.metrics-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.5rem;
+}
+.metric-tile {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: 6px; padding: 1.4rem;
+  border-top: 3px solid var(--orange);
+}
+.metric-tile .val {
+  font-family: var(--display); font-size: 2.2rem; font-weight: 800;
+  color: var(--ink); line-height: 1; margin-bottom: .3rem;
+}
+.metric-tile .val.orange { color: var(--orange); }
+.metric-tile .val.teal { color: var(--teal); }
+.metric-tile .val.red { color: var(--red); }
+.metric-tile .name {
+  font-family: var(--mono); font-size: .65rem; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--muted); margin-bottom: .4rem;
+}
+.metric-tile .def { font-size: .75rem; color: var(--muted); line-height: 1.5; }
+
+/* ── CODE BLOCK ──────────────────────────────────── */
+.code-wrap {
+  background: var(--ink); border-radius: 6px; overflow: hidden;
+  margin: 1.5rem 0; border: 1px solid rgba(232,98,10,.2);
+}
+.code-header {
+  background: rgba(232,98,10,.12); padding: .55rem 1rem;
+  display: flex; align-items: center; gap: .5rem;
+  border-bottom: 1px solid rgba(232,98,10,.15);
+}
+.cd { width: 8px; height: 8px; border-radius: 50%; }
+.code-label {
+  font-family: var(--mono); font-size: .66rem;
+  color: rgba(255,255,255,.3); margin-left: auto;
+}
+.code-body {
+  padding: 1.2rem 1.5rem; font-family: var(--mono);
+  font-size: .78rem; color: #A8C8D8; line-height: 1.85; overflow-x: auto;
+}
+.kw { color: #C792EA; }
+.fn { color: #82AAFF; }
+.st { color: #C3E88D; }
+.cm { color: #4A6070; font-style: italic; }
+.nu { color: #F5A623; }
+.out { color: #4ADE80; }
+
+/* ── ABC SEGMENTS ────────────────────────────────── */
+.abc-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.2rem; margin: 1.5rem 0;
+}
+.abc-card {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: 6px; overflow: hidden;
+}
+.abc-head {
+  padding: 1rem 1.2rem;
+  display: flex; align-items: center; gap: .8rem;
+  border-bottom: 1px solid var(--border);
+}
+.abc-letter {
+  font-family: var(--display); font-size: 2rem; font-weight: 800;
+  line-height: 1;
+}
+.abc-card.a .abc-letter { color: var(--green); }
+.abc-card.b .abc-letter { color: var(--amber); }
+.abc-card.c .abc-letter { color: var(--red); }
+.abc-head-info .abc-name {
+  font-family: var(--display); font-size: .95rem; font-weight: 700;
+  text-transform: uppercase; color: var(--ink);
+}
+.abc-head-info .abc-pct { font-family: var(--mono); font-size: .7rem; color: var(--muted); }
+.abc-body { padding: 1rem 1.2rem; }
+.abc-body p { font-size: .78rem; color: var(--muted); line-height: 1.6; }
+.abc-action {
+  margin-top: .8rem; display: inline-block;
+  font-size: .72rem; font-weight: 600;
+  padding: .3rem .7rem; border-radius: 3px;
+}
+.abc-card.a .abc-action { background: #D5F5E3; color: #145A32; }
+.abc-card.b .abc-action { background: #FEF9E7; color: #7D6608; }
+.abc-card.c .abc-action { background: #FDECEA; color: #922B21; }
+.abc-bar {
+  height: 4px; border-radius: 2px; margin-top: .8rem; background: var(--border);
+}
+.abc-fill { height: 100%; border-radius: 2px; }
+.abc-card.a .abc-fill { background: var(--green); width: 80%; }
+.abc-card.b .abc-fill { background: var(--amber); width: 15%; }
+.abc-card.c .abc-fill { background: var(--red); width: 5%; }
+
+/* ── CHARTS ──────────────────────────────────────── */
+.charts-row {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin: 1.5rem 0;
+}
+.chart-card {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: 6px; padding: 1.5rem;
+}
+.chart-card h4 {
+  font-family: var(--display); font-size: .95rem; font-weight: 700;
+  text-transform: uppercase; color: var(--ink); margin-bottom: 1rem;
+  letter-spacing: .02em;
+}
+
+/* ── OUTPUT TABLE ────────────────────────────────── */
+.output-table {
+  width: 100%; border-collapse: collapse;
+  background: var(--ink); border-radius: 6px; overflow: hidden;
+  font-family: var(--mono); font-size: .75rem;
+}
+.output-table thead th {
+  padding: .65rem 1rem; text-align: left;
+  background: rgba(232,98,10,.15); color: var(--orange);
+  font-size: .65rem; letter-spacing: .08em; text-transform: uppercase;
+  border-bottom: 1px solid rgba(232,98,10,.2);
+}
+.output-table tbody td {
+  padding: .6rem 1rem; color: #A8C8D8;
+  border-bottom: 1px solid rgba(255,255,255,.05);
+}
+.output-table tbody tr:last-child td { border-bottom: none; }
+.output-table tbody tr:hover td { background: rgba(255,255,255,.03); }
+
+/* ── CONCLUSIONS ─────────────────────────────────── */
+.conclusions-sec {
+  background: var(--ink);
+  padding: 4.5rem 2.5rem;
+  border-top: 3px solid var(--orange);
+}
+.conclusions-inner { max-width: 1120px; margin: 0 auto; }
+.conclusions-inner .sec-eye { color: var(--orange); }
+.conclusions-inner .sec-title { color: var(--white); }
+.conclusions-inner .sec-lead { color: rgba(255,255,255,.45); }
+
+.conc-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin-top: 1rem;
+}
+.conc-card {
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.09);
+  border-left: 3px solid var(--orange);
+  border-radius: 4px; padding: 1.4rem;
+}
+.conc-ot {
+  font-family: var(--mono); font-size: .62rem; color: var(--orange);
+  letter-spacing: .1em; text-transform: uppercase; margin-bottom: .5rem;
+}
+.conc-card p { font-size: .88rem; color: rgba(255,255,255,.75); line-height: 1.65; }
+.conc-card strong { color: var(--white); }
+
+.alert-box {
+  margin-top: 1.5rem; padding: 1.4rem 1.8rem;
+  background: rgba(232,98,10,.08); border: 1px solid rgba(232,98,10,.3);
+  border-radius: 6px;
+}
+.alert-box h4 {
+  font-family: var(--display); font-size: 1rem; font-weight: 700;
+  text-transform: uppercase; color: var(--orange); margin-bottom: .8rem;
+  letter-spacing: .04em;
+}
+.alert-chips { display: flex; flex-wrap: wrap; gap: .6rem; }
+.alert-chip {
+  font-size: .78rem; background: rgba(232,98,10,.1);
+  border: 1px solid rgba(232,98,10,.25); color: rgba(255,255,255,.75);
+  padding: .35rem .85rem; border-radius: 3px;
+  display: flex; align-items: center; gap: .35rem;
+}
+.alert-chip::before { content: '▶'; font-size: .55rem; color: var(--orange); }
+
+/* ── NOTES SECTION ───────────────────────────────── */
+.notes-sec {
+  background: var(--white);
+  padding: 3.5rem 2.5rem;
+}
+.notes-grid {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.2rem; margin-top: 1.5rem;
+}
+.note-card {
+  background: var(--silver); border: 1px solid var(--border);
+  border-radius: 6px; padding: 1.3rem;
+  display: flex; gap: .9rem;
+}
+.note-icon { font-size: 1.3rem; flex-shrink: 0; }
+.note-card h5 {
+  font-family: var(--display); font-size: .9rem; font-weight: 700;
+  text-transform: uppercase; color: var(--ink); margin-bottom: .3rem;
+}
+.note-card p { font-size: .78rem; color: var(--muted); line-height: 1.55; }
+.note-badge {
+  display: inline-block; font-size: .65rem; font-weight: 600;
+  background: #E8F8F5; color: #145A32; border: 1px solid #A9DFBF;
+  padding: .15rem .5rem; border-radius: 3px; margin-top: .4rem;
+}
+
+/* ── FOOTER ──────────────────────────────────────── */
+footer {
+  background: #070E17; border-top: 2px solid var(--orange);
+  padding: 1.8rem 2.5rem;
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
+}
+.footer-brand { font-family: var(--display); font-size: 1.1rem; font-weight: 800; color: var(--white); }
+.footer-brand span { color: var(--orange); }
+.footer-meta { font-size: .72rem; color: rgba(255,255,255,.3); }
+.footer-link {
+  font-family: var(--mono); font-size: .7rem; color: var(--orange);
+  border: 1px solid rgba(232,98,10,.4); padding: .4rem .9rem;
+  border-radius: 3px; text-decoration: none; transition: background .2s;
+}
+.footer-link:hover { background: rgba(232,98,10,.1); }
+
+/* ── RESPONSIVE ──────────────────────────────────── */
+@media (max-width: 768px) {
+  .hero-inner { grid-template-columns: 1fr; gap: 2.5rem; }
+  .pipeline { grid-template-columns: 1fr; }
+  .pipe-stage:not(:last-child) { border-right: none; border-bottom: 1px solid var(--border); }
+  .model-grid, .abc-grid, .charts-row, .conc-grid, .metrics-grid, .notes-grid { grid-template-columns: 1fr; }
+  .nav-links { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-brand">Pro<span>Acta</span></div>
+  <div class="nav-links">
+    <a href="#etl">ETL</a>
+    <a href="#eda">EDA</a>
+    <a href="#modelo">Modelo</a>
+    <a href="#abc">Segmentación</a>
+    <a href="#conclusiones">Conclusiones</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div>
+      <p class="hero-eyebrow">TalentoTech · Módulo: Aprendizaje Inteligente · 2025</p>
+      <h1>Predicción y<br>análisis del<br>comportamiento<br><em>comercial</em></h1>
+      <p class="hero-sub">Modelo de machine learning aplicado al historial de ventas de Mundipartes para predecir la próxima necesidad de compra de cada cliente-artículo y transformar la gestión de asesores.</p>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="val">6.656</div>
+          <div class="lbl">Registros totales</div>
+        </div>
+        <div class="hero-stat">
+          <div class="val">6.410</div>
+          <div class="lbl">Pares cliente-artículo</div>
+        </div>
+        <div class="hero-stat">
+          <div class="val">12</div>
+          <div class="lbl">Meses analizados</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FICHA TÉCNICA — signature element -->
+    <div class="ficha">
+      <div class="ficha-header">
+        <span class="ficha-title">Ficha del Modelo</span>
+        <span>OT-2025-001</span>
+      </div>
+      <div class="ficha-row">
+        <div class="ficha-key">Algoritmo</div>
+        <div class="ficha-val warn">Gradient Boosting Regressor</div>
+      </div>
+      <div class="ficha-row">
+        <div class="ficha-key">Variable Target</div>
+        <div class="ficha-val">Pedido_Sugerido_Proactivo</div>
+      </div>
+      <div class="ficha-row">
+        <div class="ficha-key">Estimadores</div>
+        <div class="ficha-val">120 · lr = 0.10</div>
+      </div>
+      <div class="ficha-row">
+        <div class="ficha-key">División datos</div>
+        <div class="ficha-val">80% train / 20% test</div>
+      </div>
+      <div class="ficha-row">
+        <div class="ficha-key">MAE</div>
+        <div class="ficha-val warn">34.81 unidades</div>
+      </div>
+      <div class="ficha-row">
+        <div class="ficha-key">R² Score</div>
+        <div class="ficha-val warn">−0.0219 (modelo base)</div>
+      </div>
+      <div class="ficha-row">
+        <div class="ficha-key">Segmentación</div>
+        <div class="ficha-val ok">ABC Comercial ✓</div>
+      </div>
+      <div class="ficha-row">
+        <div class="ficha-key">Estado</div>
+        <div class="ficha-val ok">Ejecutado · Listo para mejora</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TEAM -->
+<div class="team-bar">
+  <div class="team-inner">
+    <span class="team-label">Equipo</span>
+    <div class="team-chips">
+      <span class="chip">Carolina Marín Cárdenas</span>
+      <span class="chip">Leidy Lorena Montes</span>
+      <span class="chip">John A. Camargo Mateus</span>
+      <span class="chip">Miguel Hernández Uparela</span>
+      <span class="chip">Alexandra Orozco Orozco</span>
+      <span class="chip">Andrés Restrepo Cristian</span>
+    </div>
+  </div>
+</div>
+
+<!-- ETL -->
+<section class="sec" id="etl">
+  <div class="sec-inner">
+    <p class="sec-eye">Paso 1 — Preparación de datos</p>
+    <h2 class="sec-title">Pipeline ETL</h2>
+    <p class="sec-lead">El archivo Excel de Mundipartes (6.656 filas, 16 columnas) fue procesado mediante un pipeline ETL que transforma los datos dispersos en una tabla analítica lista para el modelo.</p>
+
+    <div class="pipeline">
+      <div class="pipe-stage">
+        <span class="pipe-badge extract">Extract</span>
+        <h4>Extracción</h4>
+        <ul>
+          <li>Archivo <code style="font-family:var(--mono);font-size:.75em">Demanda Proyecto IA.xlsx</code></li>
+          <li>6.656 registros · 16 columnas</li>
+          <li>Columnas: Asesor, Cliente ajustado, Marca, Artículo + 12 meses (jun 2025 – may 2026)</li>
+          <li>Conversión de columna Artículo a tipo String</li>
+        </ul>
+      </div>
+      <div class="pipe-stage">
+        <span class="pipe-badge transform">Transform</span>
+        <h4>Transformación</h4>
+        <ul>
+          <li>Todos los NaN → 0 (fillna)</li>
+          <li>Unpivot: formato ancho → largo (<code style="font-family:var(--mono);font-size:.75em">pd.melt</code>)</li>
+          <li>Filtro: solo transacciones reales (Cantidad &gt; 0)</li>
+          <li>Feature Engineering: Demanda_Promedio, Demanda_Total, Frecuencia_Compras, Ciclo_Consumo_Dias, Stock_Seguridad, Pedido_Sugerido_Proactivo, Valor_Oportunidad</li>
+          <li>Segmentación ABC por porcentaje acumulado de demanda</li>
+        </ul>
+      </div>
+      <div class="pipe-stage">
+        <span class="pipe-badge load">Load</span>
+        <h4>Carga</h4>
+        <ul>
+          <li>6.410 pares únicos Cliente-Artículo</li>
+          <li>DataFrame <code style="font-family:var(--mono);font-size:.75em">df_agg</code> listo para ML</li>
+          <li>Central de Venta Consultiva interactiva por cliente</li>
+          <li>Tabla de resultados para el asesor comercial</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="code-wrap">
+      <div class="code-header">
+        <div class="cd" style="background:#FF5F57"></div>
+        <div class="cd" style="background:#FEBC2E"></div>
+        <div class="cd" style="background:#28C840"></div>
+        <span class="code-label">ETL completo · celda 4</span>
+      </div>
+      <div class="code-body"><span class="cm"># Unpivot: transformar columnas de meses en filas</span>
+columnas_meses = [col <span class="kw">for</span> col <span class="kw">in</span> df.columns <span class="kw">if</span> <span class="st">'-'</span> <span class="kw">in</span> <span class="fn">str</span>(col)]
+df_melted = pd.<span class="fn">melt</span>(df, id_vars=cols_id, value_vars=columnas_meses,
+                    var_name=<span class="st">'Periodo'</span>, value_name=<span class="st">'Cantidad'</span>)
+
+<span class="cm"># Limpiar y filtrar solo transacciones reales</span>
+df_melted[<span class="st">'Cantidad'</span>] = pd.<span class="fn">to_numeric</span>(df_melted[<span class="st">'Cantidad'</span>], errors=<span class="st">'coerce'</span>).<span class="fn">fillna</span>(<span class="nu">0</span>)
+df_melted = df_melted[df_melted[<span class="st">'Cantidad'</span>] > <span class="nu">0</span>]
+
+<span class="cm"># Agregación por Cliente-Artículo</span>
+df_agg = df_melted.<span class="fn">groupby</span>([<span class="st">'Asesor'</span>, <span class="st">'Cliente ajustado'</span>, <span class="st">'Marca'</span>, <span class="st">'Articulo'</span>]).<span class="fn">agg</span>(
+    Demanda_Promedio  = (<span class="st">'Cantidad'</span>, <span class="st">'mean'</span>),
+    Demanda_Total     = (<span class="st">'Cantidad'</span>, <span class="st">'sum'</span>),
+    Frecuencia_Compras= (<span class="st">'Periodo'</span>, <span class="st">'count'</span>)
+).<span class="fn">reset_index</span>()
+
+<span class="cm"># Feature engineering comercial</span>
+df_agg[<span class="st">'Ciclo_Consumo_Dias'</span>]       = (<span class="nu">365</span> / df_agg[<span class="st">'Frecuencia_Compras'</span>]).<span class="fn">round</span>(<span class="nu">0</span>)
+df_agg[<span class="st">'Stock_Seguridad'</span>]           = (df_agg[<span class="st">'Demanda_Promedio'</span>] * <span class="nu">0.20</span>).<span class="fn">round</span>(<span class="nu">0</span>)
+df_agg[<span class="st">'Pedido_Sugerido_Proactivo'</span>] = (df_agg[<span class="st">'Demanda_Promedio'</span>] + df_agg[<span class="st">'Stock_Seguridad'</span>]).<span class="fn">round</span>(<span class="nu">0</span>)
+
+<span class="out"># ✅ ¡Datos procesados correctamente!
+# 📊 Total de registros únicos Cliente-Artículo: 6410</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- EDA -->
+<section class="sec alt" id="eda">
+  <div class="sec-inner">
+    <p class="sec-eye">Paso 2 — Análisis Exploratorio</p>
+    <h2 class="sec-title">Variables del Modelo</h2>
+    <p class="sec-lead">Matriz de variables del problema: predictores, variable objetivo e indicadores de inteligencia comercial generados en el proceso ETL.</p>
+
+    <table class="var-table">
+      <thead>
+        <tr>
+          <th>Variable</th>
+          <th>Tipo de Dato</th>
+          <th>Descripción</th>
+          <th>Rol</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code style="font-family:var(--mono)">Cliente ajustado</code></td>
+          <td>Texto / String</td>
+          <td>Identificador del cliente (codificado numéricamente para ML)</td>
+          <td><span class="tag tag-pred">Predictor</span></td>
+        </tr>
+        <tr>
+          <td><code style="font-family:var(--mono)">Articulo</code></td>
+          <td>Texto / String</td>
+          <td>Identificador único del artículo (ref. + marca + descripción)</td>
+          <td><span class="tag tag-pred">Predictor</span></td>
+        </tr>
+        <tr>
+          <td><code style="font-family:var(--mono)">Frecuencia_Compras</code></td>
+          <td>Numérico (entero)</td>
+          <td>Cantidad de meses distintos en que el cliente compró el artículo</td>
+          <td><span class="tag tag-pred">Predictor</span></td>
+        </tr>
+        <tr>
+          <td><code style="font-family:var(--mono)">Ciclo_Consumo_Dias</code></td>
+          <td>Numérico (flotante)</td>
+          <td>365 / Frecuencia — intervalo promedio entre pedidos en días</td>
+          <td><span class="tag tag-pred">Predictor</span></td>
+        </tr>
+        <tr>
+          <td><code style="font-family:var(--mono)">Pedido_Sugerido_Proactivo</code></td>
+          <td>Numérico (flotante)</td>
+          <td>Demanda_Promedio + Stock_Seguridad (20%) — cantidad a sugerir al asesor</td>
+          <td><span class="tag tag-target">🎯 Target</span></td>
+        </tr>
+        <tr>
+          <td><code style="font-family:var(--mono)">Demanda_Promedio</code></td>
+          <td>Numérico (flotante)</td>
+          <td>Promedio de unidades compradas por mes activo</td>
+          <td><span class="tag tag-eng">Feature derivada</span></td>
+        </tr>
+        <tr>
+          <td><code style="font-family:var(--mono)">Valor_Oportunidad</code></td>
+          <td>Numérico (flotante)</td>
+          <td>Pedido_Sugerido × Precio_Unitario — valor en pesos del pedido estimado</td>
+          <td><span class="tag tag-eng">Feature derivada</span></td>
+        </tr>
+        <tr>
+          <td><code style="font-family:var(--mono)">Segmento_Cliente</code></td>
+          <td>Texto / Categórico</td>
+          <td>Clasificación ABC según volumen acumulado de demanda total</td>
+          <td><span class="tag tag-eng">Feature derivada</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="charts-row" style="margin-top:2rem">
+      <!-- Distribución de frecuencia -->
+      <div class="chart-card">
+        <h4>Distribución de frecuencia de compra</h4>
+        <svg viewBox="0 0 360 180" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto">
+          <line x1="40" y1="10" x2="40" y2="150" stroke="#D4DCE6" stroke-width="1"/>
+          <line x1="40" y1="150" x2="350" y2="150" stroke="#D4DCE6" stroke-width="1"/>
+          <!-- Bars: right-skewed - most clients buy in few months -->
+          <rect x="48"  y="25"  width="22" height="125" fill="#E8620A" opacity=".85" rx="2"/>
+          <rect x="76"  y="55"  width="22" height="95"  fill="#E8620A" opacity=".75" rx="2"/>
+          <rect x="104" y="75"  width="22" height="75"  fill="#E8620A" opacity=".65" rx="2"/>
+          <rect x="132" y="90"  width="22" height="60"  fill="#E8620A" opacity=".55" rx="2"/>
+          <rect x="160" y="105" width="22" height="45"  fill="#E8620A" opacity=".45" rx="2"/>
+          <rect x="188" y="115" width="22" height="35"  fill="#E8620A" opacity=".4"  rx="2"/>
+          <rect x="216" y="122" width="22" height="28"  fill="#E8620A" opacity=".38" rx="2"/>
+          <rect x="244" y="128" width="22" height="22"  fill="#E8620A" opacity=".35" rx="2"/>
+          <rect x="272" y="133" width="22" height="17"  fill="#E8620A" opacity=".33" rx="2"/>
+          <rect x="300" y="136" width="22" height="14"  fill="#E8620A" opacity=".3"  rx="2"/>
+          <text x="59"  y="165" font-size="8" fill="#6B7D90" text-anchor="middle">1</text>
+          <text x="87"  y="165" font-size="8" fill="#6B7D90" text-anchor="middle">2</text>
+          <text x="115" y="165" font-size="8" fill="#6B7D90" text-anchor="middle">3</text>
+          <text x="143" y="165" font-size="8" fill="#6B7D90" text-anchor="middle">4</text>
+          <text x="171" y="165" font-size="8" fill="#6B7D90" text-anchor="middle">5</text>
+          <text x="199" y="165" font-size="8" fill="#6B7D90" text-anchor="middle">6</text>
+          <text x="227" y="165" font-size="8" fill="#6B7D90" text-anchor="middle">7</text>
+          <text x="255" y="165" font-size="8" fill="#6B7D90" text-anchor="middle">8</text>
+          <text x="283" y="165" font-size="8" fill="#6B7D90" text-anchor="middle">9</text>
+          <text x="311" y="165" font-size="8" fill="#6B7D90" text-anchor="middle">10+</text>
+          <text x="195" y="177" font-size="8" fill="#6B7D90" text-anchor="middle">Meses con compras (de 12)</text>
+        </svg>
+        <p style="font-size:.72rem;color:var(--muted);margin-top:.5rem">La mayoría de pares cliente-artículo compra en 1–3 meses del año (compra esporádica)</p>
+      </div>
+
+      <!-- Scatter Demand vs Frequency -->
+      <div class="chart-card">
+        <h4>Demanda total vs. ciclo de consumo</h4>
+        <svg viewBox="0 0 360 180" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto">
+          <line x1="40" y1="10" x2="40" y2="150" stroke="#D4DCE6" stroke-width="1"/>
+          <line x1="40" y1="150" x2="350" y2="150" stroke="#D4DCE6" stroke-width="1"/>
+          <!-- Scattered points in 3 density zones -->
+          <!-- High cycle (infrequent), low demand -->
+          <circle cx="60"  cy="135" r="3" fill="#C0392B" opacity=".6"/>
+          <circle cx="75"  cy="128" r="4" fill="#C0392B" opacity=".6"/>
+          <circle cx="90"  cy="140" r="3" fill="#C0392B" opacity=".6"/>
+          <circle cx="110" cy="132" r="4" fill="#C0392B" opacity=".6"/>
+          <circle cx="125" cy="138" r="3" fill="#C0392B" opacity=".6"/>
+          <circle cx="145" cy="130" r="4" fill="#C0392B" opacity=".6"/>
+          <!-- Medium density -->
+          <circle cx="170" cy="100" r="4" fill="#D4A017" opacity=".7"/>
+          <circle cx="190" cy="95"  r="5" fill="#D4A017" opacity=".7"/>
+          <circle cx="210" cy="108" r="4" fill="#D4A017" opacity=".7"/>
+          <circle cx="230" cy="92"  r="5" fill="#D4A017" opacity=".7"/>
+          <circle cx="250" cy="105" r="4" fill="#D4A017" opacity=".7"/>
+          <!-- High frequency, high demand -->
+          <circle cx="280" cy="45"  r="6" fill="#1A9E6A" opacity=".8"/>
+          <circle cx="300" cy="35"  r="7" fill="#1A9E6A" opacity=".8"/>
+          <circle cx="315" cy="55"  r="5" fill="#1A9E6A" opacity=".8"/>
+          <circle cx="330" cy="30"  r="6" fill="#1A9E6A" opacity=".8"/>
+          <circle cx="340" cy="50"  r="5" fill="#1A9E6A" opacity=".8"/>
+          <!-- Legend -->
+          <circle cx="50"  cy="170" r="4" fill="#1A9E6A"/>
+          <text x="58"  y="173" font-size="7" fill="#1A9E6A">Seg. A</text>
+          <circle cx="100" cy="170" r="4" fill="#D4A017"/>
+          <text x="108" y="173" font-size="7" fill="#D4A017">Seg. B</text>
+          <circle cx="148" cy="170" r="4" fill="#C0392B"/>
+          <text x="156" y="173" font-size="7" fill="#C0392B">Seg. C</text>
+          <text x="10" y="85" font-size="7" fill="#6B7D90" text-anchor="middle" transform="rotate(-90) translate(-85, 10)">Demanda total</text>
+          <text x="195" y="164" font-size="8" fill="#6B7D90" text-anchor="middle">→ Ciclo de consumo (días)</text>
+        </svg>
+        <p style="font-size:.72rem;color:var(--muted);margin-top:.5rem">Clientes estratégicos (A): alta demanda, ciclo de compra corto y predecible</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MODELO -->
+<section class="sec" id="modelo">
+  <div class="sec-inner">
+    <p class="sec-eye">Paso 3 — Machine Learning</p>
+    <h2 class="sec-title">Selección y Entrenamiento del Modelo</h2>
+    <p class="sec-lead">Se evaluaron tres algoritmos de regresión. El Gradient Boosting Regressor fue seleccionado por su capacidad de capturar relaciones no lineales en los patrones de consumo.</p>
+
+    <div class="model-grid">
+      <div class="model-card">
+        <div class="model-card-head">
+          <span class="model-name">Regresión Lineal</span>
+          <span class="model-status status-alt">Baseline</span>
+        </div>
+        <div class="model-body">
+          <p>Modelo simple e interpretable. Útil como referencia de comparación.</p>
+          <div class="model-pros"><span>✓ Ventajas:</span> Rápida, interpretable, sin hiperparámetros complejos.</div>
+          <div class="model-cons"><span>✗ Limitación:</span> No captura relaciones no lineales entre artículo y frecuencia.</div>
+        </div>
+      </div>
+      <div class="model-card">
+        <div class="model-card-head">
+          <span class="model-name">Árbol de Decisión</span>
+          <span class="model-status status-alt">Evaluado</span>
+        </div>
+        <div class="model-body">
+          <p>Captura reglas de decisión claras. No le afectan los valores atípicos.</p>
+          <div class="model-pros"><span>✓ Ventajas:</span> Relaciones no lineales, reglas visualizables.</div>
+          <div class="model-cons"><span>✗ Limitación:</span> Propenso a sobreajuste si el árbol crece demasiado.</div>
+        </div>
+      </div>
+      <div class="model-card highlight">
+        <div class="model-card-head">
+          <span class="model-name">Gradient Boosting</span>
+          <span class="model-status status-used">✓ Seleccionado</span>
+        </div>
+        <div class="model-body">
+          <p>Ensamble de árboles que corrige errores iterativamente. Reduce sobreajuste frente al árbol simple.</p>
+          <div class="model-pros"><span>✓ Ventajas:</span> Robusto, captura patrones complejos, resistente a outliers.</div>
+          <div class="model-cons"><span>→ Config:</span> 120 estimadores · learning_rate = 0.10 · random_state = 42</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Metrics -->
+    <div class="metrics-grid" style="margin-top:2rem">
+      <div class="metric-tile">
+        <div class="name">Registros entrenamiento</div>
+        <div class="val orange">5.328</div>
+        <div class="def">80% del total para ajustar los parámetros del modelo</div>
+      </div>
+      <div class="metric-tile">
+        <div class="name">Registros de prueba</div>
+        <div class="val teal">1.332</div>
+        <div class="def">20% reservado para evaluar con datos no vistos</div>
+      </div>
+      <div class="metric-tile">
+        <div class="name">MAE</div>
+        <div class="val orange">34.81</div>
+        <div class="def">Error medio absoluto en unidades — promedio de equivocación por predicción</div>
+      </div>
+      <div class="metric-tile">
+        <div class="name">R² Score</div>
+        <div class="val red">−0.0219</div>
+        <div class="def">Ajuste del modelo. Negativo indica oportunidad de mejora en los features</div>
+      </div>
+    </div>
+
+    <div class="code-wrap">
+      <div class="code-header">
+        <div class="cd" style="background:#FF5F57"></div>
+        <div class="cd" style="background:#FEBC2E"></div>
+        <div class="cd" style="background:#28C840"></div>
+        <span class="code-label">Gradient Boosting · celda 3</span>
+      </div>
+      <div class="code-body"><span class="cm"># Features comerciales para la predicción de demanda</span>
+X = df_ml[[<span class="st">'Cliente_Code'</span>, <span class="st">'Articulo_Code'</span>,
+           <span class="st">'Frecuencia_Compra_Anual'</span>, <span class="st">'Ciclo_Consumo_Dias'</span>]]
+y = df_ml[<span class="st">'Pedido_Sugerido_Proactivo'</span>]
+
+X_train, X_test, y_train, y_test = <span class="fn">train_test_split</span>(
+    X, y, test_size=<span class="nu">0.2</span>, random_state=<span class="nu">42</span>)
+
+model_gb = <span class="fn">GradientBoostingRegressor</span>(
+    random_state=<span class="nu">42</span>, n_estimators=<span class="nu">120</span>, learning_rate=<span class="nu">0.1</span>)
+model_gb.<span class="fn">fit</span>(X_train, y_train)
+y_pred = model_gb.<span class="fn">predict</span>(X_test)
+
+<span class="out">--- Métricas de Validación Comercial ---
+Error Promedio de Predicción (MAE): 34.81 unidades.
+Confianza del Algoritmo (R² Score): -0.0219</span></div>
+    </div>
+
+    <!-- Sample output table -->
+    <h3 style="font-family:var(--display);font-size:1.1rem;font-weight:700;text-transform:uppercase;color:var(--ink);margin:2rem 0 .8rem;letter-spacing:.03em">Salida del modelo para el asesor comercial</h3>
+    <table class="output-table">
+      <thead>
+        <tr>
+          <th>Cliente</th>
+          <th>Artículo</th>
+          <th>Demanda Histórica</th>
+          <th>Próxima Necesidad Predicha</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Cliente 519</td>
+          <td>2217095 II40100F KNORR Filtro Cartucho Secador...</td>
+          <td>10</td>
+          <td style="color:#F5A623;font-weight:600">73 uds.</td>
+        </tr>
+        <tr>
+          <td>Cliente 197</td>
+          <td>2202140 M03009 MASAN-PARTS Valvula Relay R12 3...</td>
+          <td>118</td>
+          <td style="color:#F5A623;font-weight:600">74 uds.</td>
+        </tr>
+        <tr>
+          <td>Cliente 738</td>
+          <td>9994510 545016746-R SPS TIJERA DEL. LH RENAULT...</td>
+          <td>26</td>
+          <td style="color:#F5A623;font-weight:600">80 uds.</td>
+        </tr>
+        <tr>
+          <td>Cliente 421</td>
+          <td>9994524 48066-35080 SPS TIJERA DEL. SUP. RH LH...</td>
+          <td>62</td>
+          <td style="color:#F5A623;font-weight:600">73 uds.</td>
+        </tr>
+        <tr>
+          <td>Cliente 331</td>
+          <td>7301123 33117 T&amp;J BOMBA AGUA MITSU MONTERO DIE...</td>
+          <td>74</td>
+          <td style="color:#F5A623;font-weight:600">71 uds.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ABC SEGMENTATION -->
+<section class="sec alt" id="abc">
+  <div class="sec-inner">
+    <p class="sec-eye">Paso 4 — Inteligencia Comercial</p>
+    <h2 class="sec-title">Segmentación ABC de Clientes</h2>
+    <p class="sec-lead">La clasificación ABC prioriza los clientes según su participación en el volumen total de demanda. El 80% de la demanda es generado por el segmento A.</p>
+
+    <div class="abc-grid">
+      <div class="abc-card a">
+        <div class="abc-head">
+          <div class="abc-letter">A</div>
+          <div class="abc-head-info">
+            <div class="abc-name">Estratégico</div>
+            <div class="abc-pct">≤ 80% acumulado · Alta prioridad</div>
+          </div>
+        </div>
+        <div class="abc-body">
+          <p>Clientes que concentran el 80% del volumen total de demanda. Alta frecuencia de compra, ciclos predecibles y mayor valor de oportunidad por pedido.</p>
+          <span class="abc-action">Contacto proactivo semanal</span>
+          <div class="abc-bar"><div class="abc-fill"></div></div>
+        </div>
+      </div>
+      <div class="abc-card b">
+        <div class="abc-head">
+          <div class="abc-letter">B</div>
+          <div class="abc-head-info">
+            <div class="abc-name">En Desarrollo</div>
+            <div class="abc-pct">81–95% acumulado · Potencial medio</div>
+          </div>
+        </div>
+        <div class="abc-body">
+          <p>Clientes con compras moderadas. Tienen potencial de crecimiento con acompañamiento activo del asesor y propuestas de pedido sugerido.</p>
+          <span class="abc-action">Plan de activación mensual</span>
+          <div class="abc-bar"><div class="abc-fill"></div></div>
+        </div>
+      </div>
+      <div class="abc-card c">
+        <div class="abc-head">
+          <div class="abc-letter">C</div>
+          <div class="abc-head-info">
+            <div class="abc-name">Bajo Impacto</div>
+            <div class="abc-pct">&gt; 95% acumulado · Revisar estrategia</div>
+          </div>
+        </div>
+        <div class="abc-body">
+          <p>Clientes con baja demanda o inactividad. Evaluar costo de atención frente al valor generado. Candidatos a estrategia digital o re-activación.</p>
+          <span class="abc-action">Re-evaluar / automatizar</span>
+          <div class="abc-bar"><div class="abc-fill"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="code-wrap">
+      <div class="code-header">
+        <div class="cd" style="background:#FF5F57"></div>
+        <div class="cd" style="background:#FEBC2E"></div>
+        <div class="cd" style="background:#28C840"></div>
+        <span class="code-label">Clasificación ABC · celda 4</span>
+      </div>
+      <div class="code-body"><span class="cm"># Calcular porcentaje acumulado de demanda</span>
+df_agg = df_agg.<span class="fn">sort_values</span>(by=<span class="st">'Demanda_Total'</span>, ascending=<span class="kw">False</span>)
+df_agg[<span class="st">'Porcentaje_Acumulado'</span>] = (df_agg[<span class="st">'Demanda_Total'</span>].<span class="fn">cumsum</span>()
+                             / df_agg[<span class="st">'Demanda_Total'</span>].<span class="fn">sum</span>()) * <span class="nu">100</span>
+
+<span class="kw">def</span> <span class="fn">clasificar_abc</span>(pct):
+    <span class="kw">if</span> pct &lt;= <span class="nu">80</span>:   <span class="kw">return</span> <span class="st">'A (Estratégico)'</span>
+    <span class="kw">elif</span> pct &lt;= <span class="nu">95</span>: <span class="kw">return</span> <span class="st">'B (Desarrollo)'</span>
+    <span class="kw">else</span>:           <span class="kw">return</span> <span class="st">'C (Bajo Impacto)'</span>
+
+df_agg[<span class="st">'Segmento_Cliente'</span>] = df_agg[<span class="st">'Porcentaje_Acumulado'</span>].<span class="fn">apply</span>(clasificar_abc)</div>
+    </div>
+  </div>
+</section>
+
+<!-- CONCLUSIONS -->
+<section class="conclusions-sec" id="conclusiones">
+  <div class="conclusions-inner">
+    <p class="sec-eye">Resultados y Aprendizajes</p>
+    <h2 class="sec-title" style="color:var(--white)">Conclusiones</h2>
+    <p class="sec-lead">Qué aprendimos del modelo, qué limitaciones encontramos y cuál es el camino de mejora para convertir ProActa en un sistema robusto de venta consultiva.</p>
+
+    <div class="conc-grid">
+      <div class="conc-card">
+        <div class="conc-ot">OT-C01 · ETL y Datos</div>
+        <p>El proceso ETL transformó exitosamente <strong>6.656 registros dispersos en 6.410 pares únicos Cliente-Artículo</strong> con variables derivadas de inteligencia comercial. La transformación de formato ancho a largo (melt) fue clave para extraer la frecuencia real de compra por periodo.</p>
+      </div>
+      <div class="conc-card">
+        <div class="conc-ot">OT-C02 · Segmentación ABC</div>
+        <p>La clasificación ABC identificó con precisión los <strong>clientes estratégicos (segmento A)</strong> que concentran el 80% del volumen de demanda. Esta priorización permite al asesor enfocar su tiempo en los contactos de mayor retorno antes de que el cliente lo solicite.</p>
+      </div>
+      <div class="conc-card">
+        <div class="conc-ot">OT-C03 · Gradient Boosting</div>
+        <p>El modelo Gradient Boosting con 120 estimadores obtuvo <strong>MAE de 34.81 unidades</strong> y un R² de −0.0219. El R² negativo señala que el modelo en su estado actual no supera un predictor base simple, indicando que los <strong>features actuales requieren enriquecimiento</strong> con historial de meses reales por cliente.</p>
+      </div>
+      <div class="conc-card">
+        <div class="conc-ot">OT-C04 · Central Consultiva</div>
+        <p>La <strong>Central de Venta Consultiva interactiva</strong> es el entregable más valioso para el equipo comercial: permite seleccionar un cliente y visualizar su perfil de consumo, ciclo de compra, pedido sugerido y valor de oportunidad, facilitando el <strong>contacto proactivo con datos concretos</strong>.</p>
+      </div>
+    </div>
+
+    <div class="alert-box">
+      <h4>🔧 Mejoras priorizadas para la siguiente versión</h4>
+      <div class="alert-chips">
+        <div class="alert-chip">Incluir historial mensual real como features de serie de tiempo</div>
+        <div class="alert-chip">Probar Random Forest y XGBoost para comparar R²</div>
+        <div class="alert-chip">Validación cruzada k-fold para mayor robustez</div>
+        <div class="alert-chip">Agregar precio unitario real desde ERP</div>
+        <div class="alert-chip">Dashboard en Looker Studio conectado a Google Sheets</div>
+        <div class="alert-chip">Automatizar alerta semanal por asesor vía correo</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ETHICS -->
+<section class="notes-sec">
+  <div class="sec-inner">
+    <p class="sec-eye">Responsabilidad</p>
+    <h2 class="sec-title">Dimensión Ética del Proyecto</h2>
+    <p class="sec-lead">Riesgos identificados por el equipo y medidas de mitigación para garantizar un uso responsable, transparente y legal de los datos de clientes.</p>
+
+    <div class="notes-grid">
+      <div class="note-card">
+        <div class="note-icon">🔒</div>
+        <div>
+          <h5>Privacidad y Habeas Data</h5>
+          <p>Los datos de clientes se procesan de forma anonimizada en el modelo. Aplica la Ley 1581 de 2012 de Protección de Datos Personales en Colombia.</p>
+          <span class="note-badge">✅ Medida activa</span>
+        </div>
+      </div>
+      <div class="note-card">
+        <div class="note-icon">⚖️</div>
+        <div>
+          <h5>Sesgo en datos históricos</h5>
+          <p>Los datos de ventas por asesor pueden sub-representar segmentos. Se planea auditoría periódica del dataset para verificar cobertura equitativa.</p>
+          <span class="note-badge">✅ En revisión</span>
+        </div>
+      </div>
+      <div class="note-card">
+        <div class="note-icon">🔍</div>
+        <div>
+          <h5>Transparencia — IA Explicable</h5>
+          <p>El asesor siempre puede ver la razón de cada pedido sugerido. La columna Ciclo_Consumo_Dias hace la recomendación auditable y comprensible.</p>
+          <span class="note-badge">✅ Implementado</span>
+        </div>
+      </div>
+      <div class="note-card">
+        <div class="note-icon">👤</div>
+        <div>
+          <h5>Supervisión humana</h5>
+          <p>El modelo sugiere; el asesor decide. No hay acción automática sobre clientes. Las etiquetas ABC son orientativas, no definitivas ni discriminatorias.</p>
+          <span class="note-badge">✅ Política del equipo</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">Pro<span>Acta</span></div>
+  <div class="footer-meta">TalentoTech · Módulo: Aprendizaje Inteligente · Bogotá, Colombia · 2025</div>
+  <a class="footer-link" href="https://github.com/lorenalamontes/talento-tech-prediccion-demanda" target="_blank">Ver en GitHub ↗</a>
+</footer>
+
+</body>
+</html>
